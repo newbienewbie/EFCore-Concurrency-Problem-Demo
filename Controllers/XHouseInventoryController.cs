@@ -69,7 +69,7 @@ namespace App.Controllers
         [HttpGet()]  // 为了演示方便，未采用HttpPost
         public async Task<IActionResult> Purchase()
         {
-            var trans = _context.Database.BeginTransaction(IsolationLevel.Serializable);
+            var trans = _context.Database.BeginTransaction(IsolationLevel.RepeatableRead);
             using(trans)
             {
                 try{
