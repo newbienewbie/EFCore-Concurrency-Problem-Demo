@@ -69,15 +69,25 @@ namespace App.Controllers
         [HttpGet()]  // 为了演示方便，未采用HttpPost
         public async Task<IActionResult> Purchase()
         {
-            var x = _context.XHouseInventory.FirstOrDefault(x => x.Name == "XName");
-            if(x.Sku > 0)
+            var trans = _context.Database.BeginTransaction(IsolationLevel.Serializable);
+            using(trans)
             {
-                x.Sku -= 1;
-                var order = new XOrder{ Description = $"订单...{DateTime.Now}", XHouseInventory = x, };
-                _context.XOrders.Add(order);
-                await _context.SaveChangesAsync();
+                try{
+                    var x = _context.XHouseInventory.FirstOrDefault(x => x.Name == "XName");
+                    if(x.Sku > 0)
+                    {
+                        x.Sku -= 1;
+                        var order = new XOrder{ Description = $"订单...{DateTime.Now}", XHouseInventory = x, };
+                        _context.XOrders.Add(order);
+                        await _context.SaveChangesAsync();
+                        await trans.CommitAsync();
+                    }
+                    return Json(x);
+                }
+                catch(Exception e){
+                    return new JsonResult("并发异常，请稍后再试");
+                }
             }
-            return Json(x);
         }
 
         // GET: XHouseInventory/Edit/5
