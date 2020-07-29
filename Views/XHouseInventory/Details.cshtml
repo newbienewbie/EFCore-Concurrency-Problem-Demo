@@ -1,0 +1,49 @@
+@model WebApp.Models.XHouseInventory
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>XHouseInventory</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Sku)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Sku)
+        </dd>
+    </dl>
+</div>
+<div>
+    <button id="order">order</button>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts
+{
+    <script>
+        function multipleclick(e){
+            function once(e){
+                e.preventDefault();
+                e.stopPropagation();
+                jQuery.get("/XHouseInventory/purchase").then(x =>{
+                    console.log(x);
+                })
+                return false;
+            }
+            [0,1,2,3].map(x => once(e))
+        }
+        document.getElementById("order").onclick= multipleclick;
+    </script>
+}
